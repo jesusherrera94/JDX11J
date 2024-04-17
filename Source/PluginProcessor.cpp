@@ -11,16 +11,10 @@
 
 //==============================================================================
 JX11JAudioProcessor::JX11JAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
+                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                        )
-#endif
+
 {
 }
 
@@ -91,6 +85,8 @@ void JX11JAudioProcessor::changeProgramName (int index, const juce::String& newN
 }
 
 //==============================================================================
+// Prepare to play is a function that is called before of everything and contains
+// all the needed data to run in a daw host.
 void JX11JAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
@@ -111,11 +107,10 @@ bool JX11JAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
     return true;
   #else
     // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
+    // In this template code we only support mono or stereo. 
     // Some plugin hosts, such as certain GarageBand versions, will only
     // load plugins that support stereo bus layouts.
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
     // This checks if the input layout matches the output layout
@@ -129,9 +124,10 @@ bool JX11JAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
 }
 #endif
 
+// The first parameter is the geneerated audio, and the second param is the recieved message
 void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ScopedNoDenormals noDenormals;
+    juce::ScopedNoDenormals noDenormals; // This line converts the super small numbers to zero basically
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
@@ -150,12 +146,12 @@ void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
-    }
+    //    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    //    {
+    //        auto* channelData = buffer.getWritePointer (channel);
+    //
+    //        // ..do something to the data...
+    //    }
 }
 
 //==============================================================================
