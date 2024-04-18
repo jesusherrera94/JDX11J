@@ -125,6 +125,7 @@ bool JX11JAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
 #endif
 
 // The first parameter is the geneerated audio, and the second param is the recieved message
+// midiMessages use to be empty most of the time, but something change we need to handle it
 void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals; // This line converts the super small numbers to zero basically
@@ -139,6 +140,9 @@ void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
+    
+    // process messages
+    splitBufferByEvents(buffer, midiMessages);
 
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
@@ -184,4 +188,42 @@ void JX11JAudioProcessor::setStateInformation (const void* data, int sizeInBytes
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new JX11JAudioProcessor();
+}
+
+// Personalized code!!!!
+void JX11JAudioProcessor::splitBufferByEvents(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
+    int bufferOffset = 0;
+    for (const auto metadata: midiMessages) {
+        // Render the audio that happens before this event (if any).
+        int samplesThisSegment = metadata.samplePosition - bufferOffset;
+        if (samplesThisSegment) {
+            render(buffer, samplesThisSegment, bufferOffset);
+            bufferOffset += samplesThisSegment;
+        }
+        
+        // Handle the event. Ignore MIDI messages such as sysex
+        if (metadata.numBytes <= 3) {
+            uint8_t data1 = (metadata.numBytes >= 2) ? metadata.data[1] : 0;
+            uint8_t data2 = (metadata.numBytes ==3) ? metadata.data[2] : 0;
+            handleMIDI(metadata.data[0], data1, data2);
+        }
+    }
+    
+    // Render the audio after the last MIDI event, If there were
+    // MIDI events at all, this renders the entire buffer.
+    int samplesLastSegment = buffer.getNumSamples() - bufferOffset;
+    if (samplesLastSegment > 0) {
+        render(buffer, samplesLastSegment, bufferOffset);
+    }
+    midiMessages.clear();
+}
+
+void JX11JAudioProcessor::handleMIDI(uint8_t data0, uint8_t data1, uint8_t data2) {
+    char s[16];
+    snprintf(s, 16, "%02hhX %02hhX %02hhX", data0, data1, data2);
+    DBG(s);
+}
+
+void JX11JAudioProcessor::render(juce::AudioBuffer<float>& buffer, int sampleCount, int bufferOffset) {
+    // TODO
 }
