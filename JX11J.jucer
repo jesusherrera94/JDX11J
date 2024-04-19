@@ -11,9 +11,15 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="yNMpJy" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
+      <FILE id="MCs7tg" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
+      <FILE id="FS4vfd" name="Voice.h" compile="0" resource="0" file="Source/Voice.h"/>
+      <FILE id="BKpuaM" name="Synth.cpp" compile="1" resource="0" file="Source/Synth.cpp"/>
       <FILE id="P6r26a" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="MjzB4l" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="fHWbbR" name="NoiseGenerator.h" compile="0" resource="0"
+            file="Source/NoiseGenerator.h"/>
+      <FILE id="YY9t3h" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
