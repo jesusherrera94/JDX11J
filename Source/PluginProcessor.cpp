@@ -11,9 +11,16 @@
 
 //==============================================================================
 JX11JAudioProcessor::JX11JAudioProcessor()
+#ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
-                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                     #if ! JucePlugin_IsMidiEffect
+                      #if ! JucePlugin_IsSynth
+                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                      #endif
+                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                     #endif
                        )
+#endif
 
 {
 }
@@ -101,25 +108,26 @@ void JX11JAudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool JX11JAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo. 
-    // Some plugin hosts, such as certain GarageBand versions, will only
-    // load plugins that support stereo bus layouts.
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-        return false;
+    #if JucePlugin_IsMidiEffect
+      juce::ignoreUnused (layouts);
+      return true;
+    #else
+      // This is the place where you check if the layout is supported.
+      // In this template code we only support mono or stereo.
+      // Some plugin hosts, such as certain GarageBand versions, will only
+      // load plugins that support stereo bus layouts.
+      if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
+       && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+          return false;
 
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
+      // This checks if the input layout matches the output layout
+     #if ! JucePlugin_IsSynth
+      if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
+          return false;
+     #endif
 
-    return true;
-  #endif
+      return true;
+    #endif
 }
 #endif
 
@@ -224,7 +232,10 @@ void JX11JAudioProcessor::handleMIDI(uint8_t data0, uint8_t data1, uint8_t data2
 
 void JX11JAudioProcessor::render(juce::AudioBuffer<float>& buffer, int sampleCount, int bufferOffset) {
     float* outputBuffers[2] = { nullptr, nullptr };
-    outputBuffers[0] = buffer.getWritePointer(0) + bufferOffset;
+    outputBuffers[0] = buffer.getWritePointer(0) + bufferOffset; // only left channel is configured to sound in this line
+    /**
+     // to configure the right channel the line would look like
+     */
     if (getTotalNumOutputChannels() > 1) {
         outputBuffers[1] = buffer.getWritePointer(1) + bufferOffset;
     }
