@@ -73,11 +73,19 @@ void Synth::midiMessage(uint8_t data0, uint8_t data1, uint8_t data2) {
 }
 
 void Synth::noteOn(int note, int velocity) {
+    // old implementation with compkete formula
+//    voice.note = note;
+//    voice.osc.amplitude = (velocity / 127.0f) * 0.5f;
+//    voice.osc.freq = 261.63f;
+//    voice.osc.sampleRate = sampleRate;
+//    voice.osc.phaseOffset = 0.0f;
+//    voice.osc.reset();
     voice.note = note;
+    // fixed freq
+    // float freq = 25000.0f;
+    float freq = 440.0f * std::exp2(float(note - 69 ) / 12.0f);
     voice.osc.amplitude = (velocity / 127.0f) * 0.5f;
-    voice.osc.freq = 261.63f;
-    voice.osc.sampleRate = sampleRate;
-    voice.osc.phaseOffset = 0.0f;
+    voice.osc.inc = freq / sampleRate;
     voice.osc.reset();
 }
 
