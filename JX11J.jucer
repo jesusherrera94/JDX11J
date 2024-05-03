@@ -7,6 +7,8 @@
               aaxIdentifier="com.parallels.jx11j">
   <MAINGROUP id="ySUiOM" name="JX11J">
     <GROUP id="{DC28E259-B188-49F0-B10E-41734B53395F}" name="Source">
+      <FILE id="q2cQOP" name="OscillatorSineWave.h" compile="0" resource="0"
+            file="Source/OscillatorSineWave.h"/>
       <FILE id="km884k" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
       <FILE id="LVWXFh" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
