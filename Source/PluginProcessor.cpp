@@ -171,9 +171,15 @@ bool JX11JAudioProcessor::hasEditor() const
     return true; // (change this to false if you choose to not supply an editor)
 }
 
+//To display UI this method is used!!!!!
 juce::AudioProcessorEditor* JX11JAudioProcessor::createEditor()
 {
-    return new JX11JAudioProcessorEditor (*this);
+    // original juce code
+    // return new JX11JAudioProcessorEditor (*this);
+    // code implemented for creating my personalized UI
+    auto editor = new juce::GenericAudioProcessorEditor(*this);
+    editor->setSize(500,1050);
+    return editor;
 }
 
 //==============================================================================
@@ -245,4 +251,26 @@ void JX11JAudioProcessor::render(juce::AudioBuffer<float>& buffer, int sampleCou
 
 void JX11JAudioProcessor::reset() {
     synth.reset();
+}
+
+// For UI initialization and controls implementation
+
+juce::AudioProcessorValueTreeState::ParameterLayout
+    JX11JAudioProcessor::createParameterLayout() {
+        juce::AudioProcessorValueTreeState::ParameterLayout layout;
+        // Implement parameters
+        // Polyphony
+        layout.add(std::make_unique<juce::AudioParameterChoice>(
+                                                                ParameterID::polyMode,
+                                                                "Polyphony",
+                                                                juce::StringArray{"Mono", "Poly"},
+                                                                1));
+        // Osc Tune
+        layout.add(std::make_unique<juce::AudioParameterFloat>(
+                                                               ParameterID::oscTune,
+                                                               "Osc Tune",
+                                                               juce::NormalisableRange<float>(-24.0f, 24.0f, 1.0f),
+                                                               -12.0f,
+                                                               juce::AudioParameterFloatAttributes().withLabel("semi")));
+        return layout;
 }

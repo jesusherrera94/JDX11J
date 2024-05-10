@@ -23,6 +23,7 @@ JX11JAudioProcessorEditor::~JX11JAudioProcessorEditor()
 }
 
 //==============================================================================
+// This is the original UI provided by JUCE!!!!
 void JX11JAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
