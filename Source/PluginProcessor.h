@@ -46,7 +46,8 @@ namespace ParameterID {
 //==============================================================================
 /**
 */
-class JX11JAudioProcessor  : public juce::AudioProcessor
+class JX11JAudioProcessor  : public juce::AudioProcessor,
+                             private juce::ValueTree::Listener // add listener for parameter changing!
 {
 public:
     //==============================================================================
@@ -125,4 +126,11 @@ private:
     juce::AudioParameterFloat* outputLevelParam;
     juce::AudioParameterChoice* polyModeParam;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    
+    // ======== PARAMETER CHANGES LISTENER ===================
+    void valueTreePropertyChanged(juce::ValueTree&, const juce::Identifier&) override {
+        parametersChanged.store(true);
+    }
+    std::atomic<bool> parametersChanged { false };
+    void update();
 };

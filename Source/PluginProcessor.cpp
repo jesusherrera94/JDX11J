@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Utils.h"
 
 //==============================================================================
 JX11JAudioProcessor::JX11JAudioProcessor()
@@ -23,10 +24,39 @@ JX11JAudioProcessor::JX11JAudioProcessor()
 #endif
 
 {
+    // all the parameters are linked here!!!!!
+    castParameter(apvts, ParameterID::oscMix, oscMixParam);
+    castParameter(apvts, ParameterID::oscTune, oscTuneParam);
+    castParameter(apvts, ParameterID::oscFine, oscFineParam);
+    castParameter(apvts, ParameterID::glideMode, glideModeParam);
+    castParameter(apvts, ParameterID::glideRate, glideRateParam);
+    castParameter(apvts, ParameterID::glideBend, glideBendParam);
+    castParameter(apvts, ParameterID::filterFreq, filterFreqParam);
+    castParameter(apvts, ParameterID::filterReso, filterResoParam);
+    castParameter(apvts, ParameterID::filterEnv, filterEnvParam);
+    castParameter(apvts, ParameterID::filterLFO, filterLFOParam);
+    castParameter(apvts, ParameterID::filterVelocity, filterVelocityParam);
+    castParameter(apvts, ParameterID::filterAttack, filterAttackParam);
+    castParameter(apvts, ParameterID::filterDecay, filterDecayParam);
+    castParameter(apvts, ParameterID::filterSustain, filterSustainParam);
+    castParameter(apvts, ParameterID::filterRelease, filterReleaseParam);
+    castParameter(apvts, ParameterID::envAttack, envAttackParam);
+    castParameter(apvts, ParameterID::envDecay, envDecayParam);
+    castParameter(apvts, ParameterID::envSustain, envSustainParam);
+    castParameter(apvts, ParameterID::envRelease, envReleaseParam);
+    castParameter(apvts, ParameterID::lfoRate, lfoRateParam);
+    castParameter(apvts, ParameterID::vibrato, vibratoParam);
+    castParameter(apvts, ParameterID::noise, noiseParam);
+    castParameter(apvts, ParameterID::octave, octaveParam);
+    castParameter(apvts, ParameterID::tuning, tuningParam);
+    castParameter(apvts, ParameterID::outputLevel, outputLevelParam);
+    castParameter(apvts, ParameterID::polyMode, polyModeParam);
+    apvts.state.addListener(this);
 }
 
 JX11JAudioProcessor::~JX11JAudioProcessor()
 {
+    apvts.state.removeListener(this); //remove lister when processor is destroyed!
 }
 
 //==============================================================================
@@ -97,6 +127,7 @@ void JX11JAudioProcessor::changeProgramName (int index, const juce::String& newN
 void JX11JAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     synth.allocateResources(sampleRate, samplesPerBlock);
+    parametersChanged.store(true);
     reset();
 }
 
@@ -137,16 +168,6 @@ void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 {
     juce::ScopedNoDenormals noDenormals; // This line converts the super small numbers to zero basically
     
-    // read the params updates section
-    
-    const juce::String& paramID = ParameterID::noise.getParamID();
-    float noiseMix = apvts.getRawParameterValue(paramID)->load() / 100.0f;
-    noiseMix *= noiseMix;
-    synth.noiseMix = noiseMix * 0.06f;
-    
-    //End of param updates section
-    
-    
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
@@ -158,6 +179,12 @@ void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
+    
+    // to update parameters from UI
+    bool expected = true;
+    if ( isNonRealtime() || parametersChanged.compare_exchange_strong(expected, false) ) { // if it is true, returned to false in this instruction
+        update();
+    }
     
     // process messages
     splitBufferByEvents(buffer, midiMessages);
@@ -174,6 +201,14 @@ void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     //
     //        // ..do something to the data...
     //    }
+}
+
+// =============================== GET UPDATES FROM UI PARAMETERS ==============
+
+void JX11JAudioProcessor::update() {
+    float noiseMix = noiseParam->get() / 100.0f;
+    noiseMix *= noiseMix;
+    synth.noiseMix = noiseMix * 0.06f;
 }
 
 //==============================================================================
