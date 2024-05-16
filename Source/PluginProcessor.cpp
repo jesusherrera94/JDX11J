@@ -136,6 +136,17 @@ bool JX11JAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
 void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals; // This line converts the super small numbers to zero basically
+    
+    // read the params updates section
+    
+    const juce::String& paramID = ParameterID::noise.getParamID();
+    float noiseMix = apvts.getRawParameterValue(paramID)->load() / 100.0f;
+    noiseMix *= noiseMix;
+    synth.noiseMix = noiseMix * 0.06f;
+    
+    //End of param updates section
+    
+    
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
@@ -420,7 +431,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout
         // vibrato lambda implementation
         auto vibratoStringFromValue = [](float value, int) {
             if (value < 0.0f) {
-                return "PWM" + juce::String(-value, 1);
+                return "PWM " + juce::String(-value, 1);
             } else {
                 return juce::String(value, 1);
             }

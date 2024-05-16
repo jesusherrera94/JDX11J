@@ -17,6 +17,7 @@
 class Synth {
 public:
     Synth();
+    float noiseMix; // param from UI
     
     // analog to prepareToPlate
     void allocateResources(double sampleRate, int samplesPerBlock);
