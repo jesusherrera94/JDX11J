@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Synth.h"
+#include "Preset.h"
 
 //
 namespace ParameterID {
@@ -133,4 +134,9 @@ private:
     }
     std::atomic<bool> parametersChanged { false };
     void update();
+    
+    // ================== PRESETS/PROGRAMS ================
+    void createPrograms();
+    std::vector<Preset> presets;
+    int currentProgram;
 };
