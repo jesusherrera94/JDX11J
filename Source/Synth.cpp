@@ -40,7 +40,7 @@ void Synth::render( float** outputBuffers, int sampleCount) {
         if (voice.note > 0) {
             // old line to generate noise
             // output = noise * (voice.velocity / 127.0f) * 0.5f;
-            output = voice.render() + noise; // adds noise to the signal....
+            output = voice.render(noise); // adds noise to the signal....
         }
         outputBufferLeft[sample] = output;
         if (outputBufferRight != nullptr) {
@@ -89,6 +89,7 @@ void Synth::noteOn(int note, int velocity) {
 //    // using the additive synhthesis method the following lines are added!
 //    voice.osc.freq = freq;
 //    voice.osc.sampleRate = sampleRate;
+    voice.env.level = 1.0f;
     voice.osc.period = sampleRate / freq;
     voice.osc.reset();
 }

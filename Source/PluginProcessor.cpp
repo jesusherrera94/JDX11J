@@ -328,9 +328,9 @@ void JX11JAudioProcessor::splitBufferByEvents(juce::AudioBuffer<float>& buffer, 
 void JX11JAudioProcessor::handleMIDI(uint8_t data0, uint8_t data1, uint8_t data2) {
     // Program change
     if ((data0 & 0xF0) == 0xC0) {
-        if (dta1 < presets.size()) {
+        if (data1 < presets.size()) {
             setCurrentProgram(data1); // this only can be tested using midi keyboards with program change
-            // TODO: test it later!!!!!
+            // TODO: test it later!!!!!             
         }
     }
     // process the message in the synth class
