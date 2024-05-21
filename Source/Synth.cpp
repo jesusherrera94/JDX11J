@@ -92,6 +92,8 @@ void Synth::noteOn(int note, int velocity) {
     voice.env.level = 1.0f;
     voice.osc.period = sampleRate / freq;
     voice.env.multiplier = envDecay;
+    voice.env.level = 0.001f; // this for simulate attack
+    voice.env.target = 1.0f; // this is for simulate attack
     voice.osc.reset();
 }
 

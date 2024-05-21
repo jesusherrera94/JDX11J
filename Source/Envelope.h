@@ -15,10 +15,11 @@ const float SILENCE = 0.0001f;
 class Envelope {
 public:
     float nextValue() {
-        level *= multiplier;
+        level = multiplier * (level - target) + target;
         return level;
     }
     float level;
     float multiplier;
+    float target;
     
 };

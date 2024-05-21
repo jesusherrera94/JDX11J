@@ -19,6 +19,9 @@ public:
     Synth();
     float noiseMix; // param from UI
     float envDecay; // param from UI
+    float envSustain; // param fron UI
+    float envRelease; // param from UI
+    float envAttack; // param from UI
     
     // analog to prepareToPlate
     void allocateResources(double sampleRate, int samplesPerBlock);
