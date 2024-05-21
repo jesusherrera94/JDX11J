@@ -91,6 +91,7 @@ void Synth::noteOn(int note, int velocity) {
 //    voice.osc.sampleRate = sampleRate;
     voice.env.level = 1.0f;
     voice.osc.period = sampleRate / freq;
+    voice.env.multiplier = envDecay;
     voice.osc.reset();
 }
 
