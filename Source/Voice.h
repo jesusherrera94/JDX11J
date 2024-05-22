@@ -21,6 +21,7 @@ struct Voice {
         note = 0;
         saw = 0.0f;
         osc.reset();
+        env.reset();
     }
     float render(float input) {
         float sample = osc.nextSample();
@@ -32,5 +33,8 @@ struct Voice {
         // including envelope
         float envelope = env.nextValue();
         return output * envelope;
+    }
+    void release() {
+        env.release();
     }
 };

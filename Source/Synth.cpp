@@ -37,7 +37,7 @@ void Synth::render( float** outputBuffers, int sampleCount) {
         float noise = noiseGen.nextValue() * noiseMix;
         
         float output = 0.0f;
-        if (voice.note > 0) {
+        if (voice.env.isActive()) {
             // old line to generate noise
             // output = noise * (voice.velocity / 127.0f) * 0.5f;
             output = voice.render(noise); // adds noise to the signal....
@@ -46,6 +46,9 @@ void Synth::render( float** outputBuffers, int sampleCount) {
         if (outputBufferRight != nullptr) {
             outputBufferRight[sample] = output;
         }
+    }
+    if (!voice.env.isActive()) {
+        voice.env.reset();
     }
     protectYourEars(outputBufferLeft, sampleCount);
     protectYourEars(outputBufferRight, sampleCount);
@@ -89,16 +92,20 @@ void Synth::noteOn(int note, int velocity) {
 //    // using the additive synhthesis method the following lines are added!
 //    voice.osc.freq = freq;
 //    voice.osc.sampleRate = sampleRate;
-    voice.env.level = 1.0f;
+    
+    Envelope& env = voice.env;
+    env.attackMultiplier = envAttack;
+    env.decayMultiplier = envDecay;
+    env.sustainLevel = envSustain;
+    env.releaseMultiplier = envRelease;
+    env.attack();
+    
     voice.osc.period = sampleRate / freq;
-    voice.env.multiplier = envDecay;
-    voice.env.level = 0.001f; // this for simulate attack
-    voice.env.target = 1.0f; // this is for simulate attack
     voice.osc.reset();
 }
 
 void Synth::noteOff(int note) {
     if (voice.note == note) {
-        voice.note = 0;
+        voice.release();
     }
 }
