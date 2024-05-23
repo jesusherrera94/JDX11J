@@ -22,6 +22,7 @@ public:
     float envSustain; // param fron UI
     float envRelease; // param from UI
     float envAttack; // param from UI
+    float oscMix; // param from UI
     
     // analog to prepareToPlate
     void allocateResources(double sampleRate, int samplesPerBlock);

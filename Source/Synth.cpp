@@ -87,7 +87,15 @@ void Synth::noteOn(int note, int velocity) {
     // fixed freq
     // float freq = 25000.0f;
     float freq = 440.0f * std::exp2(float(note - 69 ) / 12.0f);
-    voice.osc.amplitude = (velocity / 127.0f) * 0.5f;
+    // activate the first oscillator
+    voice.osc1.period = sampleRate / freq;
+    voice.osc1.amplitude = (velocity / 127.0f) * 0.5f;
+    voice.osc1.reset();
+    // activate the second oscillator
+    voice.osc2.period = voice.osc1.period * 0.994f;
+    voice.osc2.amplitude = voice.osc1.amplitude * oscMix;
+    voice.osc2.reset();
+    
 //    voice.osc.inc = freq / sampleRate;
 //    // using the additive synhthesis method the following lines are added!
 //    voice.osc.freq = freq;
@@ -99,9 +107,6 @@ void Synth::noteOn(int note, int velocity) {
     env.sustainLevel = envSustain;
     env.releaseMultiplier = envRelease;
     env.attack();
-    
-    voice.osc.period = sampleRate / freq;
-    voice.osc.reset();
 }
 
 void Synth::noteOff(int note) {
