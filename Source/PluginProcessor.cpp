@@ -265,7 +265,16 @@ void JX11JAudioProcessor::update() {
     float noiseMix = noiseParam->get() / 100.0f;
     noiseMix *= noiseMix;
     synth.noiseMix = noiseMix * 0.06f;
+    
     synth.oscMix = oscMixParam->get() / 100.0f; // mix for 2nd oscillator
+    float semi = oscTuneParam->get();
+    float cent = oscFineParam->get();
+    synth.detune = std::pow(1.059463094359f, -semi - 0.01f * cent); // this is the same as std::exp2((-semi - 0.01f * cent) / 12.0f);
+    
+    // tunning and octave
+    float octave = octaveParam->get();
+    float tuning = tuningParam->get();
+    synth.tune = octave * 12.0f + tuning / 100.0f;
 }
 
 //==============================================================================

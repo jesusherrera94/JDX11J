@@ -18,6 +18,7 @@ struct Voice {
     Oscillator osc2;
     float saw;
     Envelope env;
+    float period;
     void reset() {
         note = 0;
         saw = 0.0f;
