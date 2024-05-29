@@ -274,7 +274,9 @@ void JX11JAudioProcessor::update() {
     // tunning and octave
     float octave = octaveParam->get();
     float tuning = tuningParam->get();
-    synth.tune = octave * 12.0f + tuning / 100.0f;
+    // synth.tune = octave * 12.0f + tuning / 100.0f;
+    float tuneInSemi = -36.3763f - 12.0f * octave - tuning / 100.0f;
+    synth.tune = sampleRate * std::exp(0.05776226505f * tuneInSemi);
 }
 
 //==============================================================================

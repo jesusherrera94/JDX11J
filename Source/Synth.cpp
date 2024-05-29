@@ -27,27 +27,34 @@ void Synth::deallocateResources(){
 void Synth::reset() {
     voice.reset();
     noiseGen.reset();
+    pitchBend = 1.0f;
 }
 
 void Synth::render( float** outputBuffers, int sampleCount) {
     float* outputBufferLeft = outputBuffers[0];
     float* outputBufferRight = outputBuffers[1];
-    
-    voice.osc1.period = voice.period;
-    voice.osc2.period = voice.osc1.period * detune * 0.994f;
+    // multiplied by pitchBend to handle bend from physical midi controller
+    voice.osc1.period = voice.period * pitchBend;
+    voice.osc2.period = voice.osc1.period * detune * 0.994f ;
     
     for (int sample = 0; sample < sampleCount; ++sample) {
         float noise = noiseGen.nextValue() * noiseMix;
         
-        float output = 0.0f;
+        float outputLeft = 0.0f;
+        float outputRight = 0.0f;
         if (voice.env.isActive()) {
             // old line to generate noise
             // output = noise * (voice.velocity / 127.0f) * 0.5f;
-            output = voice.render(noise); // adds noise to the signal....
+            // output = voice.render(noise); // adds noise to the signal....
+            float output = voice.render(noise);
+            outputLeft += output * voice.panLeft;
+            outputRight += output * voice.panRight;
         }
-        outputBufferLeft[sample] = output;
         if (outputBufferRight != nullptr) {
-            outputBufferRight[sample] = output;
+            outputBufferLeft[sample] = outputLeft;
+            outputBufferRight[sample] = outputRight;
+        } else {
+            outputBufferLeft[sample] = (outputLeft + outputRight) * 0.5f;
         }
     }
     if (!voice.env.isActive()) {
@@ -75,6 +82,11 @@ void Synth::midiMessage(uint8_t data0, uint8_t data1, uint8_t data2) {
                 }
                 break;
             }
+        // pitch bend from physical midi controller
+        case 0xE0:
+            pitchBend = std::exp(-0.000014102f * float(data1 + 128 * data2 - 8192));
+            break;
+            
     }
 }
 
@@ -87,10 +99,12 @@ void Synth::noteOn(int note, int velocity) {
 //    voice.osc.phaseOffset = 0.0f;
 //    voice.osc.reset();
     voice.note = note;
+    voice.updatePanning();
     // fixed freq
     // float freq = 25000.0f;
-    float freq = 440.0f * std::exp2(( float(note - 69 )  + tune ) / 12.0f);
-    voice.period = sampleRate / freq;
+    // float freq = 440.0f * std::exp2(( float(note - 69 )  + tune ) / 12.0f); old way to implement period
+    float period = calcPeriod(note);
+    voice.period = period;
     // activate the first oscillator
     voice.osc1.amplitude = (velocity / 127.0f) * 0.5f;
     voice.osc1.reset();
@@ -115,4 +129,12 @@ void Synth::noteOff(int note) {
     if (voice.note == note) {
         voice.release();
     }
+}
+
+float Synth::calcPeriod(int note) const {
+    float period = tune * std::exp(-0.05776226505f * float(note));
+    while (period < 6.0f || (period * detune) < 6.0f) {
+        period += period;
+    }
+    return period;
 }

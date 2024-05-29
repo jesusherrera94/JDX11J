@@ -38,7 +38,9 @@ private:
     float sampleRate;
     Voice voice;
     NoiseGenerator noiseGen;
+    float pitchBend; // this is for midi controller bend note support!
     // methods
     void noteOn(int note, int velocity);
     void noteOff(int note);
+    float calcPeriod(int note) const;
 };
