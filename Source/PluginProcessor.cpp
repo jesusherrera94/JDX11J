@@ -277,6 +277,8 @@ void JX11JAudioProcessor::update() {
     // synth.tune = octave * 12.0f + tuning / 100.0f;
     float tuneInSemi = -36.3763f - 12.0f * octave - tuning / 100.0f;
     synth.tune = sampleRate * std::exp(0.05776226505f * tuneInSemi);
+    
+    synth.numVoices = (polyModeParam->getIndex() == 0) ? 1 : Synth::MAX_VOICES; // polyphone mode!
 }
 
 //==============================================================================
