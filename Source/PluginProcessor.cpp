@@ -271,6 +271,9 @@ void JX11JAudioProcessor::update() {
     float cent = oscFineParam->get();
     synth.detune = std::pow(1.059463094359f, -semi - 0.01f * cent); // this is the same as std::exp2((-semi - 0.01f * cent) / 12.0f);
     
+    // Volume Trim
+    synth.volumeTrim = 0.0008f * (3.2f - synth.oscMix - 25.0f * synth.noiseMix) * 1.5f;
+    
     // tunning and octave
     float octave = octaveParam->get();
     float tuning = tuningParam->get();

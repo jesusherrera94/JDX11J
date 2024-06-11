@@ -39,6 +39,7 @@ public:
     int findFreeVoice() const;
     bool sustainPedalPressed;
     void controlChange(uint8_t data1, uint8_t data2);
+    float volumeTrim;
     
 private:
     float sampleRate;
