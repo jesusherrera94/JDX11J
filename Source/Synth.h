@@ -37,6 +37,8 @@ public:
     void reset();
     void startVoice(int v, int note, int velocity);
     int findFreeVoice() const;
+    bool sustainPedalPressed;
+    void controlChange(uint8_t data1, uint8_t data2);
     
 private:
     float sampleRate;
