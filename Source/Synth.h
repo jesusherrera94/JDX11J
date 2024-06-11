@@ -25,6 +25,9 @@ public:
     float oscMix; // param from UI
     float detune; // combination of UI params
     float tune; // combination of UI params
+    // float outputLevel; // main volume from UI
+    juce::LinearSmoothedValue<float> outputLevelSmoother; // similar to outputLevel
+    
     static constexpr int MAX_VOICES = 8;
     int numVoices;
     

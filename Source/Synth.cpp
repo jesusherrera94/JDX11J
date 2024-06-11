@@ -34,6 +34,7 @@ void Synth::reset() {
     noiseGen.reset();
     pitchBend = 1.0f;
     sustainPedalPressed = false;
+    outputLevelSmoother.reset(sampleRate, 0.05);
 }
 
 void Synth::render( float** outputBuffers, int sampleCount) {
@@ -70,6 +71,9 @@ void Synth::render( float** outputBuffers, int sampleCount) {
                 float output = voice.render(noise);
                 outputLeft += output * voice.panLeft;
                 outputRight += output * voice.panRight;
+                float outputLevel = outputLevelSmoother.getNextValue();
+                outputLeft *= outputLevel;
+                outputRight *= outputLevel;
             }
         }
         

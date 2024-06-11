@@ -282,6 +282,10 @@ void JX11JAudioProcessor::update() {
     synth.tune = sampleRate * std::exp(0.05776226505f * tuneInSemi);
     
     synth.numVoices = (polyModeParam->getIndex() == 0) ? 1 : Synth::MAX_VOICES; // polyphone mode!
+    
+    // MASTER VOLUME
+    // synth.outputLevel = juce::Decibels::decibelsToGain(outputLevelParam->get());
+    synth.outputLevelSmoother.setTargetValue(juce::Decibels::decibelsToGain(outputLevelParam->get()));
 }
 
 //==============================================================================
@@ -384,6 +388,7 @@ void JX11JAudioProcessor::render(juce::AudioBuffer<float>& buffer, int sampleCou
 
 void JX11JAudioProcessor::reset() {
     synth.reset();
+    synth.outputLevelSmoother.setCurrentAndTargetValue(juce::Decibels::decibelsToGain(outputLevelParam->get()));
 }
 
 // For UI initialization and controls implementation
