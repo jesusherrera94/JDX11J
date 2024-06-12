@@ -48,7 +48,7 @@ void Synth::render( float** outputBuffers, int sampleCount) {
         Voice& voice = voices[v];
         if (voice.env.isActive()) {
             voice.osc1.period = voice.period * pitchBend;
-            voice.osc2.period = voice.osc1.period * detune * 0.994f ;
+            voice.osc2.period = voice.osc1.period * detune; // * 0.994f ; <- add this with ui feature
         }
     }
     
@@ -71,11 +71,12 @@ void Synth::render( float** outputBuffers, int sampleCount) {
                 float output = voice.render(noise);
                 outputLeft += output * voice.panLeft;
                 outputRight += output * voice.panRight;
-                float outputLevel = outputLevelSmoother.getNextValue();
-                outputLeft *= outputLevel;
-                outputRight *= outputLevel;
             }
         }
+        
+        float outputLevel = outputLevelSmoother.getNextValue();
+        outputLeft *= outputLevel;
+        outputRight *= outputLevel;
         
         if (outputBufferRight != nullptr) {
             outputBufferLeft[sample] = outputLeft;
@@ -131,7 +132,7 @@ void Synth::startVoice(int v, int note, int velocity) {
     voice.note = note;
     voice.updatePanning();
     
-    voice.osc1.amplitude = (velocity / 127.0f) * 0.5f;
+    // voice.osc1.amplitude = (velocity / 127.0f) * 0.5f;
     voice.osc1.amplitude = volumeTrim * velocity;
     voice.osc2.amplitude = voice.osc1.amplitude * oscMix;
     
@@ -158,19 +159,26 @@ void Synth::restartMonoVoice(int note, int velocity) {
 
 void Synth::noteOn(int note, int velocity) {
     int v = 0; // index of the voice to use ( 0 = mono voice)
-    
     if (numVoices == 1) { // monophonic
         if (voices[0].note > 0) { // legato-style playing
+            shiftQueueNotes();
             restartMonoVoice(note, velocity);
             return;
-        } else { // polyphonic
-            v = findFreeVoice();
         }
+    }
+    else { // polyphonic
+        v = findFreeVoice();
     }
     startVoice(v, note, velocity);
 }
 
 void Synth::noteOff(int note) {
+    if ((numVoices == 1) && (voices[0].note == note)) {
+        int queuedNote = nextQueueNote();
+        if (queuedNote > 0) {
+            restartMonoVoice(queuedNote, -1);
+        }
+    }
     for(int v = 0; v < MAX_VOICES; v++) {
         if (voices[v].note == note) {
             if (sustainPedalPressed) {
@@ -197,7 +205,7 @@ int Synth::findFreeVoice() const {
     for (int i = 0; i < MAX_VOICES; ++i) {
         if (voices[i].env.level < l && !voices[i].env.isInAttack()) {
             l = voices[i].env.level;
-            v = l;
+            v = i;
         }
     }
     return v;
@@ -220,4 +228,27 @@ void Synth::controlChange(uint8_t data1, uint8_t data2){
             }
             break;
     }
+}
+
+void Synth::shiftQueueNotes() {
+    for (int temp = MAX_VOICES - 1; temp > 0; temp--) {
+        voices[temp].note = voices[temp - 1].note;
+        voices[temp].release();
+    }
+}
+
+int Synth::nextQueueNote() {
+    int held = 0;
+    for (int v = MAX_VOICES - 1; v > 0; v--) {
+        if (voices[v].note > 0) {
+            held = v;
+        }
+    }
+    
+    if (held > 0) {
+        int note = voices[held].note;
+        voices[held].note = 0;
+        return note;
+    }
+    return 0;
 }

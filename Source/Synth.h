@@ -44,6 +44,8 @@ public:
     void controlChange(uint8_t data1, uint8_t data2);
     float volumeTrim;
     void restartMonoVoice(int note, int velocity);
+    void shiftQueueNotes();
+    int nextQueueNote();
     
 private:
     float sampleRate;
