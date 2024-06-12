@@ -144,10 +144,28 @@ void Synth::startVoice(int v, int note, int velocity) {
     env.attack();
 }
 
+// for mono usage
+void Synth::restartMonoVoice(int note, int velocity) {
+    float period = calcPeriod(0, note);
+    
+    Voice& voice = voices[0];
+    voice.period = period;
+    
+    voice.env.level += SILENCE + SILENCE;
+    voice.note = note;
+    voice.updatePanning();
+}
+
 void Synth::noteOn(int note, int velocity) {
     int v = 0; // index of the voice to use ( 0 = mono voice)
-    if (numVoices > 1) { // polyphonic
-        v = findFreeVoice();
+    
+    if (numVoices == 1) { // monophonic
+        if (voices[0].note > 0) { // legato-style playing
+            restartMonoVoice(note, velocity);
+            return;
+        } else { // polyphonic
+            v = findFreeVoice();
+        }
     }
     startVoice(v, note, velocity);
 }
