@@ -26,6 +26,9 @@ public:
     float detune; // combination of UI params
     float tune; // combination of UI params
     // float outputLevel; // main volume from UI
+    float velocitySensitivity; // param from UI
+    bool ignoreVelocity;
+    
     juce::LinearSmoothedValue<float> outputLevelSmoother; // similar to outputLevel
     
     static constexpr int MAX_VOICES = 8;

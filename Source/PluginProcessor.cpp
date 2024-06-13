@@ -283,6 +283,16 @@ void JX11JAudioProcessor::update() {
     
     synth.numVoices = (polyModeParam->getIndex() == 0) ? 1 : Synth::MAX_VOICES; // polyphone mode!
     
+    // Velocity sensitivity
+    float filterVelocity = filterVelocityParam->get();
+    if (filterVelocity < -90.0f) { // if is all the way down it has no sensivity
+        synth.velocitySensitivity = 0.0f;
+        synth.ignoreVelocity = true;
+    } else {
+        synth.velocitySensitivity = 0.0005f * filterVelocity;
+        synth.ignoreVelocity = false;
+    }
+    
     // MASTER VOLUME
     // synth.outputLevel = juce::Decibels::decibelsToGain(outputLevelParam->get());
     synth.outputLevelSmoother.setTargetValue(juce::Decibels::decibelsToGain(outputLevelParam->get()));

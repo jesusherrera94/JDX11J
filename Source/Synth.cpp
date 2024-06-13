@@ -133,7 +133,8 @@ void Synth::startVoice(int v, int note, int velocity) {
     voice.updatePanning();
     
     // voice.osc1.amplitude = (velocity / 127.0f) * 0.5f;
-    voice.osc1.amplitude = volumeTrim * velocity;
+    float vel = 0.004f * float((velocity + 64) * (velocity + 64)) - 8.0f;
+    voice.osc1.amplitude = volumeTrim * vel;
     voice.osc2.amplitude = voice.osc1.amplitude * oscMix;
     
     Envelope& env = voice.env;
@@ -158,6 +159,13 @@ void Synth::restartMonoVoice(int note, int velocity) {
 }
 
 void Synth::noteOn(int note, int velocity) {
+    if (ignoreVelocity) {
+        velocity = 80;
+    } else {
+        // APPLY SENSITIVITY TO VELOCITY!!! (HOW LOUD THE NOTE WILL BE!)
+        float sens = std::abs(velocitySensitivity) / 0.05f;
+        velocity = velocity * sens;
+    }
     int v = 0; // index of the voice to use ( 0 = mono voice)
     if (numVoices == 1) { // monophonic
         if (voices[0].note > 0) { // legato-style playing
