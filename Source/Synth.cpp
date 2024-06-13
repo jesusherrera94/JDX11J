@@ -11,7 +11,7 @@
 #include "Synth.h"
 #include "Utils.h"
 
-static const float ANALOG = 1.0f;
+static const float ANALOG = 0.002f;
 static const int SUSTAIN = -1;
 
 Synth::Synth()
@@ -98,7 +98,7 @@ void Synth::render( float** outputBuffers, int sampleCount) {
 }
 
 void Synth::midiMessage(uint8_t data0, uint8_t data1, uint8_t data2) {
-    uint8_t channel = data0 & 0x0F; // get the channel
+    // uint8_t channel = data0 & 0x0F; // get the channel
     switch (data0 & 0xF0) {
         case 0x80:
             noteOff(data1 & 0x7F);
@@ -126,7 +126,7 @@ void Synth::midiMessage(uint8_t data0, uint8_t data1, uint8_t data2) {
 }
 
 void Synth::startVoice(int v, int note, int velocity) {
-    float period = calcPeriod(v,note);
+    float period = calcPeriod(v, note);
     Voice& voice = voices[v];
     voice.period = period;
     voice.note = note;

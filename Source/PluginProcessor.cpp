@@ -51,11 +51,10 @@ JX11JAudioProcessor::JX11JAudioProcessor()
     castParameter(apvts, ParameterID::tuning, tuningParam);
     castParameter(apvts, ParameterID::outputLevel, outputLevelParam);
     castParameter(apvts, ParameterID::polyMode, polyModeParam);
-    apvts.state.addListener(this);
-    
     // ========= for creating presets/programs
     createPrograms();
     setCurrentProgram(0);
+    apvts.state.addListener(this);
 }
 
 JX11JAudioProcessor::~JX11JAudioProcessor()
@@ -218,8 +217,9 @@ void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     // This is here to avoid people getting screaming feedback
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i){
         buffer.clear (i, 0, buffer.getNumSamples());
+    }
     
     // to update parameters from UI
     bool expected = true;
@@ -301,7 +301,7 @@ juce::AudioProcessorEditor* JX11JAudioProcessor::createEditor()
     // return new JX11JAudioProcessorEditor (*this);
     // code implemented for creating my personalized UI
     auto editor = new juce::GenericAudioProcessorEditor(*this);
-    editor->setSize(500,1050);
+    editor->setSize(500, 700);
     return editor;
 }
 
@@ -312,7 +312,6 @@ void JX11JAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
     copyXmlToBinary(*apvts.copyState().createXml(), destData);
-    DBG(apvts.copyState().toXmlString());
 }
 
 void JX11JAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -339,7 +338,7 @@ void JX11JAudioProcessor::splitBufferByEvents(juce::AudioBuffer<float>& buffer, 
     for (const auto metadata: midiMessages) {
         // Render the audio that happens before this event (if any).
         int samplesThisSegment = metadata.samplePosition - bufferOffset;
-        if (samplesThisSegment) {
+        if (samplesThisSegment > 0) {
             render(buffer, samplesThisSegment, bufferOffset);
             bufferOffset += samplesThisSegment;
         }
@@ -347,7 +346,7 @@ void JX11JAudioProcessor::splitBufferByEvents(juce::AudioBuffer<float>& buffer, 
         // Handle the event. Ignore MIDI messages such as sysex
         if (metadata.numBytes <= 3) {
             uint8_t data1 = (metadata.numBytes >= 2) ? metadata.data[1] : 0;
-            uint8_t data2 = (metadata.numBytes ==3) ? metadata.data[2] : 0;
+            uint8_t data2 = (metadata.numBytes == 3) ? metadata.data[2] : 0;
             handleMIDI(metadata.data[0], data1, data2);
         }
     }
