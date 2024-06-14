@@ -28,6 +28,7 @@ public:
     // float outputLevel; // main volume from UI
     float velocitySensitivity; // param from UI
     float vibrato; // parameter from UI
+    float pwmDepth; // variable from UI
     bool ignoreVelocity;
     
     
@@ -63,6 +64,7 @@ private:
     std::array<Voice, MAX_VOICES> voices;
     NoiseGenerator noiseGen;
     float pitchBend; // this is for midi controller bend note support!
+    float modWheel;
     // methods
     void noteOn(int note, int velocity);
     void noteOff(int note);

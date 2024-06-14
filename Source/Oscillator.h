@@ -81,6 +81,22 @@ public:
         return output - dc;
         
     }
+    void squareWave(Oscillator& other, float newPeriod) {
+        reset();
+        
+        if(other.inc > 0.0f) {
+            phase = other.phaseMax + other.phaseMax - other.phase;
+            inc = -other.inc;
+        } else if (other.inc < 0.0f) {
+            phase = other.phase;
+            inc = other.inc;
+        } else {
+            phase = -PI;
+            inc = PI;
+        }
+        phase += PI * newPeriod / 2.0f;
+        phaseMax = phase;
+    }
 private:
     float phase;
     float phaseMax;

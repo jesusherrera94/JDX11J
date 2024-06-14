@@ -300,6 +300,11 @@ void JX11JAudioProcessor::update() {
     float vibrato = vibratoParam->get() / 200.0f;
     synth.vibrato = 0.2f * vibrato * vibrato;
     
+    synth.pwmDepth = synth.vibrato;
+    if (vibrato < 0.0f) {
+        synth.vibrato = 0.0f;
+    }
+    
     // MASTER VOLUME
     // synth.outputLevel = juce::Decibels::decibelsToGain(outputLevelParam->get());
     synth.outputLevelSmoother.setTargetValue(juce::Decibels::decibelsToGain(outputLevelParam->get()));
