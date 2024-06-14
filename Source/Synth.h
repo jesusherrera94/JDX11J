@@ -27,12 +27,18 @@ public:
     float tune; // combination of UI params
     // float outputLevel; // main volume from UI
     float velocitySensitivity; // param from UI
+    float vibrato; // parameter from UI
     bool ignoreVelocity;
+    
     
     juce::LinearSmoothedValue<float> outputLevelSmoother; // similar to outputLevel
     
     static constexpr int MAX_VOICES = 8;
     int numVoices;
+    const int LFO_MAX = 32;
+    float lfoInc;
+    int lfoStep;
+    float lfo;
     
     // analog to prepareToPlate
     void allocateResources(double sampleRate, int samplesPerBlock);
@@ -49,6 +55,7 @@ public:
     void restartMonoVoice(int note, int velocity);
     void shiftQueueNotes();
     int nextQueueNote();
+    void updateLFO();
     
 private:
     float sampleRate;

@@ -293,6 +293,13 @@ void JX11JAudioProcessor::update() {
         synth.ignoreVelocity = false;
     }
     
+    const float inverseUpdate = inverseSampleRate * synth.LFO_MAX;
+    float lfoRate = std::exp(7.0f * lfoRateParam->get() - 4.0f);
+    synth.lfoInc = lfoRate * inverseUpdate * float(TWO_PI);
+    
+    float vibrato = vibratoParam->get() / 200.0f;
+    synth.vibrato = 0.2f * vibrato * vibrato;
+    
     // MASTER VOLUME
     // synth.outputLevel = juce::Decibels::decibelsToGain(outputLevelParam->get());
     synth.outputLevelSmoother.setTargetValue(juce::Decibels::decibelsToGain(outputLevelParam->get()));
