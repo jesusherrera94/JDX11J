@@ -28,7 +28,10 @@ public:
     // float outputLevel; // main volume from UI
     float velocitySensitivity; // param from UI
     float vibrato; // parameter from UI
-    float pwmDepth; // variable from UI
+    float pwmDepth; // parameter from UI
+    int glideMode; // parameter from UI
+    float glideRate; // parameter from UI
+    float glideBend; // parameter from UI
     bool ignoreVelocity;
     
     
@@ -65,8 +68,15 @@ private:
     NoiseGenerator noiseGen;
     float pitchBend; // this is for midi controller bend note support!
     float modWheel;
+    int lastNote;
     // methods
     void noteOn(int note, int velocity);
     void noteOff(int note);
     float calcPeriod(int v, int note) const;
+    bool isPlayingLegatoStyle() const;
+    inline void updatePeriod(Voice&  voice){
+        voice.osc1.period = voice.period * pitchBend;
+        voice.osc2.period = voice.osc1.period * detune; // * 0.994f ; <- add this with ui feature
+    }
 };
+

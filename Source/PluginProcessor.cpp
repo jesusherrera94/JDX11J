@@ -305,6 +305,17 @@ void JX11JAudioProcessor::update() {
         synth.vibrato = 0.0f;
     }
     
+    // glide mode
+    synth.glideMode = glideModeParam->getIndex();
+    float glideRate = glideRateParam->get();
+    if (glideRate < 2.0f) {
+        synth.glideRate = 1.0f; // no glide
+    } else {
+        synth.glideRate = 1.0f - std::exp(-inverseUpdate * std::exp(6.0f - 0.07f * glideRate));
+    }
+    
+    synth.glideBend = glideBendParam->get();
+    
     // MASTER VOLUME
     // synth.outputLevel = juce::Decibels::decibelsToGain(outputLevelParam->get());
     synth.outputLevelSmoother.setTargetValue(juce::Decibels::decibelsToGain(outputLevelParam->get()));
@@ -383,6 +394,15 @@ void JX11JAudioProcessor::splitBufferByEvents(juce::AudioBuffer<float>& buffer, 
 }
 
 void JX11JAudioProcessor::handleMIDI(uint8_t data0, uint8_t data1, uint8_t data2) {
+    // control change
+    if ((data0 & 0xF0) == 0xB0) {
+        if (data1 == 0x07) {
+            float volumeCtl = float(data2) / 127.0f;
+            outputLevelParam->beginChangeGesture();
+            outputLevelParam->setValueNotifyingHost(volumeCtl);
+            outputLevelParam->endChangeGesture();
+        }
+    }
     // Program change
     if ((data0 & 0xF0) == 0xC0) {
         if (data1 < presets.size()) {
