@@ -11,6 +11,7 @@
 #pragma once
 #include "Oscillator.h"
 #include "Envelope.h"
+#include "Filter.h"
 
 struct Voice {
     int note;
@@ -22,6 +23,8 @@ struct Voice {
     float panLeft, panRight;
     float target;
     float glideRate;
+    Filter filter; // filter effect
+    
     void reset() {
         note = 0;
         saw = 0.0f;
@@ -30,6 +33,7 @@ struct Voice {
         osc1.reset();
         osc2.reset();
         env.reset();
+        filter.reset();
     }
     float render(float input) {
         float sample1 = osc1.nextSample();
@@ -38,6 +42,8 @@ struct Voice {
         // saw = saw * 0.997f - sample; it can be minus it only flips the signal 180 degrees
         
         float output = saw + input;
+        
+        output = filter.render(output); // adding filtering to the output signal
         
         // including envelope
         float envelope = env.nextValue();
@@ -53,5 +59,6 @@ struct Voice {
     }
     void updateLFO() {
         period += glideRate * (target - period);
+        filter.updateCoefficients(1000.0f, 0.0707f);
     }
 };
