@@ -271,9 +271,6 @@ void JX11JAudioProcessor::update() {
     float cent = oscFineParam->get();
     synth.detune = std::pow(1.059463094359f, -semi - 0.01f * cent); // this is the same as std::exp2((-semi - 0.01f * cent) / 12.0f);
     
-    // Volume Trim
-    synth.volumeTrim = 0.0008f * (3.2f - synth.oscMix - 25.0f * synth.noiseMix) * 1.5f;
-    
     // tunning and octave
     float octave = octaveParam->get();
     float tuning = tuningParam->get();
@@ -315,6 +312,16 @@ void JX11JAudioProcessor::update() {
     }
     
     synth.glideBend = glideBendParam->get();
+    
+    // filtering
+    synth.filterKeyTracking = 0.08f * filterFreqParam->get() - 1.5f;
+    float filterReso = filterResoParam->get() / 100.0f;
+    synth.filterQ = std::exp(3.0f * filterReso);
+    float filterLFO = filterLFOParam->get() / 100.0f;
+    synth.filterLFODepth = 2.5f * filterLFO * filterLFO;
+    
+    // Volume Trim
+    synth.volumeTrim = 0.0008f * (3.2f - synth.oscMix - 25.0f * synth.noiseMix) * (1.5f - 0.5f * filterReso);
     
     // MASTER VOLUME
     // synth.outputLevel = juce::Decibels::decibelsToGain(outputLevelParam->get());

@@ -32,7 +32,12 @@ public:
     int glideMode; // parameter from UI
     float glideRate; // parameter from UI
     float glideBend; // parameter from UI
+    float filterKeyTracking; // parameter combined from UI
+    float filterQ; // parameter from UI
+    float filterLFODepth; // parameter from UI
+    float resonanceCtl;
     bool ignoreVelocity;
+    float pressure;
     
     
     juce::LinearSmoothedValue<float> outputLevelSmoother; // similar to outputLevel

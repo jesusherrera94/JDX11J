@@ -42,6 +42,8 @@ void Synth::reset() {
     lfoStep = 0;
     modWheel = 0.0f;
     lastNote = 0;
+    resonanceCtl = 1.0f;
+    pressure = 0.0f;
 }
 
 void Synth::render( float** outputBuffers, int sampleCount) {
@@ -57,6 +59,7 @@ void Synth::render( float** outputBuffers, int sampleCount) {
             voice.osc1.period = voice.period * pitchBend;
             voice.osc2.period = voice.osc1.period * detune; // * 0.994f ; <- add this with ui feature
             voice.glideRate = glideRate;
+            voice.filterQ = filterQ * resonanceCtl;
         }
     }
     
@@ -132,6 +135,10 @@ void Synth::midiMessage(uint8_t data0, uint8_t data1, uint8_t data2) {
         case 0xB0:
             controlChange(data1, data2);
             break;
+        // Channel after touch
+        case 0xD0:
+            pressure = 0.0001f * float(data1 * data1);
+            break;
     }
 }
 
@@ -163,6 +170,9 @@ void Synth::startVoice(int v, int note, int velocity) {
         voice.osc2.squareWave(voice.osc1, voice.period);
     }
     
+    voice.cutoff = sampleRate / (period * PI);
+    voice.cutoff *= std::exp(velocitySensitivity * float(velocity - 64));
+    
     Envelope& env = voice.env;
     
     env.attackMultiplier = envAttack;
@@ -180,6 +190,10 @@ void Synth::restartMonoVoice(int note, int velocity) {
     voice.target = period;
     if (glideMode == 0) {
         voice.period = period;
+    }
+    voice.cutoff = sampleRate / (period * PI);
+    if (velocity > 0) {
+        voice.cutoff *= std::exp(velocitySensitivity * float(velocity - 64));
     }
     voice.env.level += SILENCE + SILENCE;
     voice.note = note;
@@ -258,6 +272,10 @@ void Synth::controlChange(uint8_t data1, uint8_t data2){
         case 0x01:
             modWheel = 0.000005f * float(data2 * data2);
             break;
+        // resonance
+        case 0x47:
+            resonanceCtl = 154.0f / float(154 - data2);
+            break;
         default:
             if (data1 >= 0x78) {
                 for (int v = 0; v < MAX_VOICES; ++v) {
@@ -304,12 +322,13 @@ void Synth::updateLFO() {
         float vibratoMode = 1.0f + sine * (modWheel + vibrato);
         float pwm = 1.0f + sine * (modWheel + pwmDepth);
         
+        float filterMod = filterKeyTracking + (filterLFODepth + pressure) * sine;
         for (int v = 0; v < MAX_VOICES; ++v) {
             Voice& voice = voices[v];
             if (voice.env.isActive()) {
                 voice.osc1.modulation = vibratoMode;
                 voice.osc2.modulation = pwm;
-                
+                voice.filterMod = filterMod;
                 voice.updateLFO();
                 updatePeriod(voice);
             }
