@@ -40,6 +40,8 @@ public:
     float pressure;
     float filterCtl;
     float filterZip;
+    float filterAttack, filterDecay, filterSustain, filterRelease; // params from UI
+    float filterEnvDepth; // combination of paramos from UI
     
     
     juce::LinearSmoothedValue<float> outputLevelSmoother; // similar to outputLevel

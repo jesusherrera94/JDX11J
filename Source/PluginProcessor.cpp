@@ -319,9 +319,16 @@ void JX11JAudioProcessor::update() {
     synth.filterQ = std::exp(3.0f * filterReso);
     float filterLFO = filterLFOParam->get() / 100.0f;
     synth.filterLFODepth = 2.5f * filterLFO * filterLFO;
+    synth.filterEnvDepth = 0.06f * filterEnvParam->get();
     
     // Volume Trim
     synth.volumeTrim = 0.0008f * (3.2f - synth.oscMix - 25.0f * synth.noiseMix) * (1.5f - 0.5f * filterReso);
+    
+    synth.filterAttack = std::exp(-inverseUpdate * std::exp(5.5f - 0.075f * filterAttackParam->get()));
+    synth.filterDecay = std::exp(-inverseUpdate * std::exp(5.5f - 0.075f * filterDecayParam->get()));
+    float filterSustain = filterSustainParam->get() / 100.0f;
+    synth.filterSustain = filterSustain * filterSustain;
+    synth.filterRelease = std::exp(-inverseUpdate * std::exp(5.5f - 0.075f * filterReleaseParam->get()));
     
     // MASTER VOLUME
     // synth.outputLevel = juce::Decibels::decibelsToGain(outputLevelParam->get());
