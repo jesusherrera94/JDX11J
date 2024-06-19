@@ -39,6 +39,7 @@ public:
     bool ignoreVelocity;
     float pressure;
     float filterCtl;
+    float filterZip;
     
     
     juce::LinearSmoothedValue<float> outputLevelSmoother; // similar to outputLevel
