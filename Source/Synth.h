@@ -38,6 +38,7 @@ public:
     float resonanceCtl;
     bool ignoreVelocity;
     float pressure;
+    float filterCtl;
     
     
     juce::LinearSmoothedValue<float> outputLevelSmoother; // similar to outputLevel

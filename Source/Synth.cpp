@@ -44,6 +44,7 @@ void Synth::reset() {
     lastNote = 0;
     resonanceCtl = 1.0f;
     pressure = 0.0f;
+    filterCtl = 0.0f;
 }
 
 void Synth::render( float** outputBuffers, int sampleCount) {
@@ -276,6 +277,14 @@ void Synth::controlChange(uint8_t data1, uint8_t data2){
         case 0x47:
             resonanceCtl = 154.0f / float(154 - data2);
             break;
+        // Filter +
+        case 0x4A:
+            filterCtl = 0.02f * float(data2);
+            break;
+        // Filter -
+        case 0x4B:
+            filterCtl = -0.03f * float(data2);
+            break;
         default:
             if (data1 >= 0x78) {
                 for (int v = 0; v < MAX_VOICES; ++v) {
@@ -322,7 +331,7 @@ void Synth::updateLFO() {
         float vibratoMode = 1.0f + sine * (modWheel + vibrato);
         float pwm = 1.0f + sine * (modWheel + pwmDepth);
         
-        float filterMod = filterKeyTracking + (filterLFODepth + pressure) * sine;
+        float filterMod = filterKeyTracking + filterCtl + (filterLFODepth + pressure) * sine;
         for (int v = 0; v < MAX_VOICES; ++v) {
             Voice& voice = voices[v];
             if (voice.env.isActive()) {
