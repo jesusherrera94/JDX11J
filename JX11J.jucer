@@ -7,6 +7,7 @@
               aaxIdentifier="com.parallels.jx11j">
   <MAINGROUP id="ySUiOM" name="JX11J">
     <GROUP id="{DC28E259-B188-49F0-B10E-41734B53395F}" name="Source">
+      <FILE id="yYqU8m" name="old_filter.h" compile="0" resource="0" file="Source/old_filter.h"/>
       <FILE id="IVbY1l" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
       <FILE id="fv0CAK" name="Envelope.h" compile="0" resource="0" file="Source/Envelope.h"/>
       <FILE id="CpUgPC" name="Preset.h" compile="0" resource="0" file="Source/Preset.h"/>
@@ -38,6 +39,7 @@
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -63,6 +65,7 @@
         <MODULEPATH id="juce_graphics" path="../../../../development/JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../../../development/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../../development/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../development/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
