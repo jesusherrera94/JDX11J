@@ -28,6 +28,8 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     JX11JAudioProcessor& audioProcessor;
+    // UI components
+    juce::Slider outputLevelKnob;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JX11JAudioProcessorEditor)
 };

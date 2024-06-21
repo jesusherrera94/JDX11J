@@ -347,9 +347,12 @@ juce::AudioProcessorEditor* JX11JAudioProcessor::createEditor()
     // original juce code
     // return new JX11JAudioProcessorEditor (*this);
     // code implemented for creating my personalized UI
-    auto editor = new juce::GenericAudioProcessorEditor(*this);
-    editor->setSize(500, 700);
-    return editor;
+    // Create generic editor for debugging and development
+    //    auto editor = new juce::GenericAudioProcessorEditor(*this);
+    //    editor->setSize(500, 700);
+    //    return editor;
+    // The real editor is the following
+    return new JX11JAudioProcessorEditor (*this);
 }
 
 //==============================================================================
