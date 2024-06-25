@@ -10,6 +10,13 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "RotaryKnob.h"
+#include "LookAndFeel.h"
+
+using APVTS = juce::AudioProcessorValueTreeState;
+using sliderAttachment = APVTS::SliderAttachment;
+
+using ButtonAttachment = APVTS::ButtonAttachment;
 
 //==============================================================================
 /**
@@ -29,7 +36,18 @@ private:
     // access the processor object that created it.
     JX11JAudioProcessor& audioProcessor;
     // UI components
-    juce::Slider outputLevelKnob;
+    // first add the attachment here!
+    // then go to PluginEditor.cpp to complete the integration
+    LookAndFeel globalLNF;
+    RotaryKnob outputLevelKnob;
+    sliderAttachment outputLevelAttachment { audioProcessor.apvts,
+        ParameterID::outputLevel.getParamID(), outputLevelKnob.slider };
+    RotaryKnob filterResoKnob;
+    sliderAttachment filterResoAttachment { audioProcessor.apvts,
+        ParameterID::filterReso.getParamID(), filterResoKnob.slider };
+    juce::TextButton polyModeButton;
+    ButtonAttachment polyModeAttachment { audioProcessor.apvts,
+        ParameterID::polyMode.getParamID(), polyModeButton };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JX11JAudioProcessorEditor)
 };

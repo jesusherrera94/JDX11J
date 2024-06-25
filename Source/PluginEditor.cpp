@@ -13,11 +13,15 @@
 JX11JAudioProcessorEditor::JX11JAudioProcessorEditor (JX11JAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    outputLevelKnob.setSliderStyle(
-                                   juce::Slider::SliderStyle::RotaryHorizontalDrag
-                                   );
-    outputLevelKnob.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 20);
+    juce::LookAndFeel::setDefaultLookAndFeel(&globalLNF);
+    outputLevelKnob.label = "Level";
     addAndMakeVisible(outputLevelKnob);
+    filterResoKnob.label = "Reso";
+    addAndMakeVisible(filterResoKnob);
+    polyModeButton.setButtonText("Poly");
+    polyModeButton.setClickingTogglesState(true);
+    addAndMakeVisible(polyModeButton);
+    
     setSize (400, 300);
 }
 
@@ -37,5 +41,11 @@ void JX11JAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    outputLevelKnob.setBounds(20, 20, 100, 120);
+    juce::Rectangle r(20,20,100,120);
+    outputLevelKnob.setBounds(r);
+    r = r.withX(r.getRight() + 20);
+    filterResoKnob.setBounds(r);
+    polyModeButton.setSize(80, 30);
+    r = r.withY(r.getBottom());
+    polyModeButton.setCentrePosition({r.getX(), r.getCentreY()});
 }

@@ -7,6 +7,10 @@
               aaxIdentifier="com.parallels.jx11j">
   <MAINGROUP id="ySUiOM" name="JX11J">
     <GROUP id="{DC28E259-B188-49F0-B10E-41734B53395F}" name="Source">
+      <FILE id="OkPv3D" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
+      <FILE id="jybi8T" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
+      <FILE id="i9k0dH" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
+      <FILE id="Fkjd3j" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
       <FILE id="yYqU8m" name="old_filter.h" compile="0" resource="0" file="Source/old_filter.h"/>
       <FILE id="IVbY1l" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
       <FILE id="fv0CAK" name="Envelope.h" compile="0" resource="0" file="Source/Envelope.h"/>
