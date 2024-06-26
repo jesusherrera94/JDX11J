@@ -90,6 +90,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     // =========================== UI APVTS declaration ============================
     juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", createParameterLayout() };
+    // MIDI LEARN
+    std::atomic<bool> midiLearn;
 
 private:
     //==============================================================================
@@ -139,4 +141,5 @@ private:
     void createPrograms();
     std::vector<Preset> presets;
     int currentProgram;
+    std::atomic<uint8_t> midiLearnCC;
 };

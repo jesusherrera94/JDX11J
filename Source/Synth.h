@@ -42,6 +42,7 @@ public:
     float filterZip;
     float filterAttack, filterDecay, filterSustain, filterRelease; // params from UI
     float filterEnvDepth; // combination of paramos from UI
+    uint8_t resoCC = 0x47;
     
     
     juce::LinearSmoothedValue<float> outputLevelSmoother; // similar to outputLevel

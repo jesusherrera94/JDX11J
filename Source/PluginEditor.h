@@ -21,7 +21,8 @@ using ButtonAttachment = APVTS::ButtonAttachment;
 //==============================================================================
 /**
 */
-class JX11JAudioProcessorEditor  : public juce::AudioProcessorEditor
+class JX11JAudioProcessorEditor  : public juce::AudioProcessorEditor,
+                                   private juce::Button::Listener, juce::Timer
 {
 public:
     JX11JAudioProcessorEditor (JX11JAudioProcessor&);
@@ -48,6 +49,11 @@ private:
     juce::TextButton polyModeButton;
     ButtonAttachment polyModeAttachment { audioProcessor.apvts,
         ParameterID::polyMode.getParamID(), polyModeButton };
+    
+    // MIDI LEARN BUTTON
+    juce::TextButton midiLearnButton;
+    void buttonClicked(juce::Button* button) override;
+    void timerCallback() override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JX11JAudioProcessorEditor)
 };

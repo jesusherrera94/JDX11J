@@ -10,6 +10,10 @@
 #include "PluginEditor.h"
 #include "Utils.h"
 
+static const juce::Identifier pluginTag = "PLUGIN";
+static const juce::Identifier extraTag = "EXTRA";
+static const juce::Identifier midiCCAttribute = "midiCC";
+
 //==============================================================================
 JX11JAudioProcessor::JX11JAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -221,6 +225,8 @@ void JX11JAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
         buffer.clear (i, 0, buffer.getNumSamples());
     }
     
+    synth.resoCC = midiLearnCC;
+    
     // to update parameters from UI
     bool expected = true;
     if ( isNonRealtime() || parametersChanged.compare_exchange_strong(expected, false) ) { // if it is true, returned to false in this instruction
@@ -361,7 +367,14 @@ void JX11JAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    copyXmlToBinary(*apvts.copyState().createXml(), destData);
+    auto xml = std::make_unique<juce::XmlElement>(pluginTag);
+    std::unique_ptr<juce::XmlElement> parametersXML(apvts.copyState().createXml());
+    xml->addChildElement(parametersXML.release());
+    auto extraXML = std::make_unique<juce::XmlElement>(extraTag);
+    extraXML->setAttribute(midiCCAttribute, midiLearnCC);
+    xml->addChildElement(extraXML.release());
+    copyXmlToBinary(*xml, destData);
+    DBG(xml->toString());
 }
 
 void JX11JAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -369,9 +382,17 @@ void JX11JAudioProcessor::setStateInformation (const void* data, int sizeInBytes
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
     std::unique_ptr<juce::XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
-    if (xml.get() != nullptr && xml->hasTagName(apvts.state.getType())) {
-        apvts.replaceState(juce::ValueTree::fromXml(*xml));
-        parametersChanged.store(true);
+    if (xml.get() != nullptr && xml->hasTagName(pluginTag)) {
+        if (auto* parametersXML = xml->getChildByName(apvts.state.getType())) {
+            apvts.replaceState(juce::ValueTree::fromXml(*parametersXML));
+            parametersChanged.store(true);
+        }
+        if (auto* extraXML = xml->getChildByName(extraTag)) {
+            int midiCC = extraXML->getIntAttribute(midiCCAttribute);
+            if (midiCC != 0) {
+                midiLearnCC = static_cast<uint8_t>(midiCC);
+            }
+        }
     }
 }
 
@@ -411,6 +432,12 @@ void JX11JAudioProcessor::splitBufferByEvents(juce::AudioBuffer<float>& buffer, 
 }
 
 void JX11JAudioProcessor::handleMIDI(uint8_t data0, uint8_t data1, uint8_t data2) {
+    if (midiLearn && (data0 & 0xF0) == 0xB0) {
+        DBG("Learned a MIDI CC");
+        midiLearnCC = data1;
+        midiLearn = false;
+        return;
+    }
     // control change
     if ((data0 & 0xF0) == 0xB0) {
         if (data1 == 0x07) {
@@ -447,6 +474,8 @@ void JX11JAudioProcessor::render(juce::AudioBuffer<float>& buffer, int sampleCou
 void JX11JAudioProcessor::reset() {
     synth.reset();
     synth.outputLevelSmoother.setCurrentAndTargetValue(juce::Decibels::decibelsToGain(outputLevelParam->get()));
+    midiLearn = false;
+    midiLearnCC = synth.resoCC;
 }
 
 // For UI initialization and controls implementation
