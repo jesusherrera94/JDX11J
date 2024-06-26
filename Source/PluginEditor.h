@@ -40,12 +40,19 @@ private:
     // first add the attachment here!
     // then go to PluginEditor.cpp to complete the integration
     LookAndFeel globalLNF;
+    // output knob
     RotaryKnob outputLevelKnob;
     sliderAttachment outputLevelAttachment { audioProcessor.apvts,
         ParameterID::outputLevel.getParamID(), outputLevelKnob.slider };
+    // filter knob
     RotaryKnob filterResoKnob;
     sliderAttachment filterResoAttachment { audioProcessor.apvts,
         ParameterID::filterReso.getParamID(), filterResoKnob.slider };
+    // oscilator mix knob
+    RotaryKnob oscMixKnob;
+    sliderAttachment oscMixAttachment { audioProcessor.apvts,
+        ParameterID::oscMix.getParamID(), oscMixKnob.slider };
+    // polymode toggle button
     juce::TextButton polyModeButton;
     ButtonAttachment polyModeAttachment { audioProcessor.apvts,
         ParameterID::polyMode.getParamID(), polyModeButton };

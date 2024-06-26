@@ -21,6 +21,8 @@ JX11JAudioProcessorEditor::JX11JAudioProcessorEditor (JX11JAudioProcessor& p)
     polyModeButton.setButtonText("Poly");
     polyModeButton.setClickingTogglesState(true);
     addAndMakeVisible(polyModeButton);
+    oscMixKnob.label = "Osc Mix";
+    addAndMakeVisible(oscMixKnob);
     setSize (600, 300);
     
     //midi learn button
@@ -51,6 +53,8 @@ void JX11JAudioProcessorEditor::resized()
     outputLevelKnob.setBounds(r);
     r = r.withX(r.getRight() + 20);
     filterResoKnob.setBounds(r);
+    r = r.withX(r.getRight() + 20);
+    oscMixKnob.setBounds(r);
     polyModeButton.setSize(80, 30);
     r = r.withY(r.getBottom());
     polyModeButton.setCentrePosition({r.getX(), r.getCentreY()});
