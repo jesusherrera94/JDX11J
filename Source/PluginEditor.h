@@ -40,18 +40,34 @@ private:
     // first add the attachment here!
     // then go to PluginEditor.cpp to complete the integration
     LookAndFeel globalLNF;
+    juce::Viewport viewport;
+    juce::Component contentComponent;
     // output knob
     RotaryKnob outputLevelKnob;
     sliderAttachment outputLevelAttachment { audioProcessor.apvts,
         ParameterID::outputLevel.getParamID(), outputLevelKnob.slider };
-    // filter knob
-    RotaryKnob filterResoKnob;
-    sliderAttachment filterResoAttachment { audioProcessor.apvts,
-        ParameterID::filterReso.getParamID(), filterResoKnob.slider };
-    // oscilator mix knob
+    
+    // =============================== OSCILLATOR GROUP ==========================
+    RotaryKnob oscTuneKnob;
+    sliderAttachment oscTuneAttachment { audioProcessor.apvts,
+        ParameterID::oscTune.getParamID(), oscTuneKnob.slider };
+    RotaryKnob oscFineKnob;
+    sliderAttachment oscFineAttachment { audioProcessor.apvts,
+        ParameterID::oscFine.getParamID(), oscFineKnob.slider };
     RotaryKnob oscMixKnob;
     sliderAttachment oscMixAttachment { audioProcessor.apvts,
         ParameterID::oscMix.getParamID(), oscMixKnob.slider };
+    
+    
+    // ================================== FILTER GROUP ============================
+    // filter Reso knob
+    RotaryKnob filterResoKnob;
+    sliderAttachment filterResoAttachment { audioProcessor.apvts,
+        ParameterID::filterReso.getParamID(), filterResoKnob.slider };
+    
+    
+    // ========================== RIGHT CONTROL BUTTONS =========================
+    
     // polymode toggle button
     juce::TextButton polyModeButton;
     ButtonAttachment polyModeAttachment { audioProcessor.apvts,
