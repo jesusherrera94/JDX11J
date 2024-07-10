@@ -46,6 +46,13 @@ private:
     RotaryKnob outputLevelKnob;
     sliderAttachment outputLevelAttachment { audioProcessor.apvts,
         ParameterID::outputLevel.getParamID(), outputLevelKnob.slider };
+    RotaryKnob noiseKnob;
+    sliderAttachment noiseAttachment { audioProcessor.apvts,
+        ParameterID::noise.getParamID(), noiseKnob.slider };
+    RotaryKnob octaveKnob;
+    sliderAttachment octaveAttachment { audioProcessor.apvts,
+        ParameterID::octave.getParamID(), octaveKnob.slider };
+
     
     // =============================== OSCILLATOR GROUP ==========================
     RotaryKnob oscTuneKnob;
@@ -58,13 +65,70 @@ private:
     sliderAttachment oscMixAttachment { audioProcessor.apvts,
         ParameterID::oscMix.getParamID(), oscMixKnob.slider };
     
+    // ================================= GLIDE GROUP =============================
+    // TODO: Implement glide mode option
+    RotaryKnob glideRateKnob;
+    sliderAttachment glideRateAttachment { audioProcessor.apvts,
+        ParameterID::glideRate.getParamID(), glideRateKnob.slider };
+    RotaryKnob glideBendKnob;
+    sliderAttachment glideBendAttachment { audioProcessor.apvts,
+        ParameterID::glideBend.getParamID(), glideBendKnob.slider };
     
-    // ================================== FILTER GROUP ============================
+    // ================================== FILTER GROUP 1 ============================
     // filter Reso knob
     RotaryKnob filterResoKnob;
     sliderAttachment filterResoAttachment { audioProcessor.apvts,
         ParameterID::filterReso.getParamID(), filterResoKnob.slider };
+    RotaryKnob filterFreqKnob;
+    sliderAttachment filterFreqAttachment { audioProcessor.apvts,
+        ParameterID::filterFreq.getParamID(), filterFreqKnob.slider };
+    RotaryKnob filterEnvKnob;
+    sliderAttachment filterEnvAttachment { audioProcessor.apvts,
+        ParameterID::filterEnv.getParamID(), filterEnvKnob.slider };
     
+    // ================================== FILTER GROUP 2 ============================
+    RotaryKnob filterLFOKnob;
+    sliderAttachment filterLFOAttachment { audioProcessor.apvts,
+        ParameterID::filterLFO.getParamID(), filterLFOKnob.slider };
+    RotaryKnob filterVelocityKnob;
+    sliderAttachment filterVelocityAttachment { audioProcessor.apvts,
+        ParameterID::filterVelocity.getParamID(), filterVelocityKnob.slider };
+    RotaryKnob filterAttackKnob;
+    sliderAttachment filterAttackAttachment { audioProcessor.apvts,
+        ParameterID::filterAttack.getParamID(), filterAttackKnob.slider };
+    
+    // ================================== FILTER GROUP 3 ============================
+    RotaryKnob filterDecayKnob;
+    sliderAttachment filterDecayAttachment { audioProcessor.apvts,
+        ParameterID::filterDecay.getParamID(), filterDecayKnob.slider };
+    RotaryKnob filterSustainKnob;
+    sliderAttachment filterSustainAttachment { audioProcessor.apvts,
+        ParameterID::filterSustain.getParamID(), filterSustainKnob.slider };
+    RotaryKnob filterReleaseKnob;
+    sliderAttachment filterReleaseAttachment { audioProcessor.apvts,
+        ParameterID::filterRelease.getParamID(), filterReleaseKnob.slider };
+    
+    // ================================== ENVELOPE GROUP ============================
+    RotaryKnob envAttackKnob;
+    sliderAttachment envAttackAttachment { audioProcessor.apvts,
+        ParameterID::envAttack.getParamID(), envAttackKnob.slider };
+    RotaryKnob envDecayKnob;
+    sliderAttachment envDecayAttachment { audioProcessor.apvts,
+        ParameterID::envDecay.getParamID(), envDecayKnob.slider };
+    RotaryKnob envSustainKnob;
+    sliderAttachment envSustainAttachment { audioProcessor.apvts,
+        ParameterID::envSustain.getParamID(), envSustainKnob.slider };
+    
+    // ================= ENVELOPE, LFO RATE, VIBRATO GROUP ======================
+    RotaryKnob envReleaseKnob;
+    sliderAttachment envReleaseAttachment { audioProcessor.apvts,
+        ParameterID::envRelease.getParamID(), envReleaseKnob.slider };
+    RotaryKnob LFORateKnob;
+    sliderAttachment LFORateAttachment { audioProcessor.apvts,
+        ParameterID::lfoRate.getParamID(), LFORateKnob.slider };
+    RotaryKnob vibratoKnob;
+    sliderAttachment vibratoAttachment { audioProcessor.apvts,
+        ParameterID::vibrato.getParamID(), vibratoKnob.slider };
     
     // ========================== RIGHT CONTROL BUTTONS =========================
     
