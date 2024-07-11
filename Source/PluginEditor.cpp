@@ -80,6 +80,16 @@ JX11JAudioProcessorEditor::JX11JAudioProcessorEditor (JX11JAudioProcessor& p)
     midiLearnButton.setButtonText("MIDI Learn");
     midiLearnButton.addListener(this);
     contentComponent.addAndMakeVisible(midiLearnButton);
+    //glideModeComboBox.set("Glide Mode");
+    glideModeLabel.setText("Glide Mode: ", juce::dontSendNotification);
+    // glideModeLabel.setJustificationType(juce::Justification::centredLeft);
+    // glideModeLabel.attachToComponent(&glideModeComboBox, true); <- to add the label at the left of the comboBox
+    glideModeComboBox.addItem("OFF", 1);
+    glideModeComboBox.addItem("Legato", 2);
+    glideModeComboBox.addItem("Always", 3);
+    glideModeComboBox.setSelectedId(1);
+    contentComponent.addAndMakeVisible(glideModeLabel);
+    contentComponent.addAndMakeVisible(glideModeComboBox);
     viewport.setViewedComponent(&contentComponent, true);
     setSize (530, 300);
 }
@@ -155,6 +165,7 @@ void JX11JAudioProcessorEditor::resized()
     rectangleELVGroup = rectangleELVGroup.withX(rectangleELVGroup.getRight() + 20);
     vibratoKnob.setBounds(rectangleELVGroup);
     
+    
     polyModeButton.setSize(80, 30);
     
     
@@ -164,6 +175,9 @@ void JX11JAudioProcessorEditor::resized()
     midiLearnButton.setBounds(rb);
     rb = rb.withY(rb.getY() + 40);
     polyModeButton.setBounds(rb);
+    glideModeLabel.setBounds(rb.getX(), rb.getY() + 33, 80, 30);
+    rb = rb.withY(rb.getY() + 65);
+    glideModeComboBox.setBounds(rb);
     viewport.setBounds(getLocalBounds());
 }
 

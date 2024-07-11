@@ -17,6 +17,7 @@ using APVTS = juce::AudioProcessorValueTreeState;
 using sliderAttachment = APVTS::SliderAttachment;
 
 using ButtonAttachment = APVTS::ButtonAttachment;
+using ComboBoxAttachment = APVTS::ComboBoxAttachment;
 
 //==============================================================================
 /**
@@ -141,6 +142,10 @@ private:
     juce::TextButton midiLearnButton;
     void buttonClicked(juce::Button* button) override;
     void timerCallback() override;
-
+    juce::Label glideModeLabel;
+    juce::ComboBox glideModeComboBox;
+    ComboBoxAttachment glideModeAttachment { audioProcessor.apvts,
+    ParameterID::glideMode.getParamID(), glideModeComboBox };
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JX11JAudioProcessorEditor)
 };
