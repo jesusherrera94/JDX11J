@@ -4,7 +4,7 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               pluginManufacturer="ParallelsDevelopment" pluginManufacturerCode="PADV"
-              aaxIdentifier="com.parallels.jx11j">
+              aaxIdentifier="com.parallels.jx11j" companyWebsite="www.parallelsdev.com">
   <MAINGROUP id="ySUiOM" name="JX11J">
     <GROUP id="{63D64BB1-AE3C-D6CA-5B53-176EE35F0AA9}" name="Resources">
       <FILE id="JvfABW" name="Lato-Medium.ttf" compile="0" resource="1" file="../../../coursesCode/JUCE/synth-plugin-book/Resources/Lato-Medium.ttf"/>
