@@ -7,8 +7,8 @@
               aaxIdentifier="com.parallels.jx11j" companyWebsite="www.parallelsdev.com">
   <MAINGROUP id="ySUiOM" name="JX11J">
     <GROUP id="{63D64BB1-AE3C-D6CA-5B53-176EE35F0AA9}" name="Resources">
-      <FILE id="JvfABW" name="Lato-Medium.ttf" compile="0" resource="1" file="../../../coursesCode/JUCE/synth-plugin-book/Resources/Lato-Medium.ttf"/>
-      <FILE id="QaYrtA" name="OFL.txt" compile="0" resource="1" file="../../../coursesCode/JUCE/synth-plugin-book/Resources/OFL.txt"/>
+      <FILE id="UakEb6" name="Lato-Medium.ttf" compile="0" resource="1" file="../coursesCode/JUCE/synth-plugin-book/Resources/Lato-Medium.ttf"/>
+      <FILE id="tVoUoX" name="OFL.txt" compile="0" resource="1" file="../coursesCode/JUCE/synth-plugin-book/Resources/OFL.txt"/>
     </GROUP>
     <GROUP id="{DC28E259-B188-49F0-B10E-41734B53395F}" name="Source">
       <FILE id="OkPv3D" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
